@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRE Quant 170 — Master Mode</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+--bg:#06060b;--surface:#0e0e17;--surface2:#161622;--surface3:#1d1d2d;
+--border:#272740;--border2:#33334d;
+--accent:#00e5a0;--accentD:rgba(0,229,160,.1);
+--ac2:#7c5cfc;--ac2D:rgba(124,92,252,.1);
+--ac3:#ff6b6b;--ac3D:rgba(255,107,107,.1);
+--ac4:#ffd93d;--ac4D:rgba(255,217,61,.1);
+--ac5:#00b4ff;--ac5D:rgba(0,180,255,.1);
+--text:#eaeaf2;--text2:#7a7a94;--text3:#50506a;
+--correct:#00e5a0;--wrong:#ff6b6b;
+--shadow:0 4px 24px rgba(0,0,0,.4);
+--glow:0 0 20px rgba(0,229,160,.08);
+}
+[data-theme="light"]{
+--bg:#f3f3f8;--surface:#fff;--surface2:#ededf4;--surface3:#e2e2ec;
+--border:#ccccd8;--border2:#b8b8c8;
+--accent:#00a070;--accentD:rgba(0,160,112,.08);
+--ac2:#5838d0;--ac2D:rgba(88,56,208,.08);
+--ac3:#d83030;--ac3D:rgba(216,48,48,.08);
+--ac4:#b89800;--ac4D:rgba(184,152,0,.08);
+--ac5:#0078b8;--ac5D:rgba(0,120,184,.08);
+--text:#16162a;--text2:#5a5a72;--text3:#8888a0;
+--correct:#00a070;--wrong:#d83030;
+--shadow:0 4px 24px rgba(0,0,0,.06);
+--glow:none;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+.mono{font-family:'JetBrains Mono',monospace}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,160,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.015) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+[data-theme="light"] body::before{background-image:linear-gradient(rgba(0,0,0,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.025) 1px,transparent 1px)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+a{color:var(--accent);text-decoration:none}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(6,6,11,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:54px;display:flex;align-items:center;padding:0 16px;gap:12px;transition:background .3s}
+[data-theme="light"] nav{background:rgba(243,243,248,.92)}
+.logo{font-family:'Outfit';font-weight:900;font-size:1.1rem;letter-spacing:-.4px;display:flex;align-items:center;gap:7px;flex-shrink:0;cursor:pointer}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--ac2));border-radius:7px;display:grid;place-items:center;font-size:13px;font-weight:900;color:#fff}
+.nav-tabs{display:flex;gap:1px;background:var(--surface2);padding:2px;border-radius:9px;margin:0 auto}
+.nav-tab{background:none;border:none;color:var(--text2);font-family:'DM Sans';font-size:.77rem;font-weight:600;padding:5px 13px;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.on{color:#000;background:var(--accent)}
+[data-theme="light"] .nav-tab.on{color:#fff}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pill{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:16px;display:flex;align-items:center;gap:4px}
+.pill-streak{background:var(--accentD);color:var(--accent)}
+.theme-btn,.auth-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:var(--surface2);display:grid;place-items:center;cursor:pointer;font-size:15px;transition:all .15s;color:var(--text)}
+.theme-btn:hover,.auth-btn:hover{border-color:var(--accent);transform:scale(1.06)}
+.user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid var(--accent);cursor:pointer;object-fit:cover}
+.mobile-menu{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer}
+@media(max-width:768px){.mobile-menu{display:block}.nav-tabs{display:none}.nav-tabs.open{display:flex;flex-direction:column;position:absolute;top:54px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:6px;border-radius:0;z-index:999}}
+
+/* ── AUTH MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:2000;place-items:center}
+.modal-overlay.show{display:grid}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:36px;max-width:400px;width:90%;text-align:center;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal h2{font-family:'Outfit';font-weight:900;font-size:1.4rem;margin-bottom:6px}
+.modal p{font-size:.85rem;color:var(--text2);margin-bottom:24px;line-height:1.6}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;background:#fff;color:#333;border:1px solid #ddd;border-radius:10px;font-family:'DM Sans';font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
+.google-btn:hover{box-shadow:0 4px 15px rgba(0,0,0,.1);transform:translateY(-1px)}
+.google-btn svg{width:20px;height:20px}
+.modal-close{margin-top:16px;background:none;border:none;color:var(--text2);font-size:.82rem;cursor:pointer;font-family:'DM Sans'}
+.modal-close:hover{color:var(--text)}
+.user-menu{position:absolute;top:58px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:200px;box-shadow:var(--shadow);display:none;z-index:1001}
+.user-menu.show{display:block}
+.user-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;font-size:.85rem;cursor:pointer;transition:background .15s;color:var(--text)}
+.user-menu-item:hover{background:var(--surface2)}
+.user-menu-email{padding:10px 14px;font-size:.75rem;color:var(--text3);border-bottom:1px solid var(--border);margin-bottom:4px}
+
+/* ── PAGES ── */
+main{position:relative;z-index:1;padding-top:54px;min-height:100vh}
+.pg{display:none;padding:24px 16px;max-width:1200px;margin:0 auto;animation:fadeUp .3s ease}
+.pg.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── SHARED ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:20px;transition:all .2s}
+.card:hover{box-shadow:var(--glow)}
+.badge{font-size:.62rem;font-weight:700;padding:2px 9px;border-radius:14px;letter-spacing:.4px;text-transform:uppercase}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.sec-hdr h2{font-family:'Outfit';font-size:1.5rem;font-weight:900;letter-spacing:-.4px}
+.back-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Sans';font-size:.8rem;font-weight:600;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s}
+.back-btn:hover{border-color:var(--accent)}
+.btn{font-family:'DM Sans';font-size:.8rem;font-weight:600;padding:8px 20px;border-radius:8px;cursor:pointer;border:none;transition:all .15s}
+.btn-p{background:var(--accent);color:#000}
+.btn-p:hover{box-shadow:0 4px 15px rgba(0,229,160,.2)}
+.btn-s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-s:hover{border-color:var(--accent)}
+.btn-ac2{background:var(--ac2);color:#fff}
+.btn-danger{background:var(--ac3D);color:var(--ac3);border:1px solid rgba(255,107,107,.2)}
+.tabs{display:flex;gap:1px;background:var(--surface);padding:2px;border-radius:9px;flex-wrap:wrap}
+.tab{background:none;border:none;color:var(--text2);font-family:'DM Sans';font-size:.74rem;font-weight:600;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--accent);color:#000}
+[data-theme="light"] .tab.on{color:#fff}
+
+/* ── DASHBOARD ── */
+.hero h1{font-family:'Outfit';font-size:2.4rem;font-weight:900;line-height:1.06;letter-spacing:-1.5px;margin-bottom:5px}
+.grad{background:linear-gradient(135deg,var(--accent),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:.95rem;margin-bottom:24px}
+.score-box{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.score-ring{width:96px;height:96px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.score-ring .num{font-family:'Outfit';font-size:1.9rem;font-weight:900;color:var(--accent)}
+.score-ring .lbl{font-size:.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.score-info{flex:1;min-width:200px}
+.score-info h3{font-family:'Outfit';font-size:.95rem;font-weight:700;margin-bottom:4px}
+.score-info p{font-size:.8rem;color:var(--text2);line-height:1.6}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center}
+.stat-card .v{font-family:'JetBrains Mono';font-size:1.5rem;font-weight:700}
+.stat-card .l{font-size:.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-top:1px}
+
+/* Topic Table */
+.topic-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden}
+.topic-table th{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);font-weight:600}
+.topic-table td{padding:11px 14px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.topic-table tr:last-child td{border-bottom:none}
+.topic-table .bar-cell{width:140px}
+.mini-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.topic-table .correct-col{color:var(--correct);font-weight:700;font-family:'JetBrains Mono';font-size:.82rem}
+.topic-table .wrong-col{color:var(--wrong);font-weight:700;font-family:'JetBrains Mono';font-size:.82rem}
+
+.history-box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px;margin-bottom:20px}
+.history-box h3{font-family:'Outfit';font-weight:800;font-size:.92rem;margin-bottom:14px}
+.chart-wrap{width:100%;height:180px;position:relative}
+.actions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.action{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.action:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--glow)}
+.action .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px;margin-bottom:12px}
+.action h3{font-family:'Outfit';font-weight:700;font-size:.92rem;margin-bottom:3px}
+.action p{font-size:.76rem;color:var(--text2);line-height:1.5}
+
+/* ── MENTAL MATH ── */
+.cfg-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cfg{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Sans';font-size:.76rem;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;transition:all .15s}
+.cfg:hover{border-color:var(--accent)}
+.cfg.on{background:var(--accentD);border-color:var(--accent);color:var(--accent)}
+.arena{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:32px;text-align:center;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.arena-timer{position:absolute;top:12px;right:16px;font-family:'JetBrains Mono';font-size:1.4rem;font-weight:700;color:var(--accent)}
+.arena-score{position:absolute;top:12px;left:16px;font-size:.82rem;color:var(--text2)}
+.arena-score span{color:var(--accent);font-weight:700}
+.arena-q{font-family:'JetBrains Mono';font-size:2.1rem;font-weight:700;margin-bottom:18px;letter-spacing:1px}
+.arena-input{background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'JetBrains Mono';font-size:1.5rem;text-align:center;padding:10px 18px;border-radius:11px;width:190px;outline:none;transition:border .15s}
+.arena-input:focus{border-color:var(--accent)}
+.arena-input.ok{border-color:var(--correct);background:rgba(0,229,160,.03)}
+.arena-input.no{border-color:var(--wrong);background:rgba(255,107,107,.03)}
+.arena-fb{margin-top:8px;font-size:.82rem;font-weight:600;min-height:20px}
+.arena-streak{margin-top:6px;font-size:.78rem;color:var(--text2)}
+.start-btn{background:linear-gradient(135deg,var(--accent),#00c48c);border:none;color:#000;font-family:'Outfit';font-size:.92rem;font-weight:700;padding:11px 34px;border-radius:11px;cursor:pointer;transition:all .15s}
+.start-btn:hover{transform:scale(1.04);box-shadow:0 4px 18px rgba(0,229,160,.2)}
+.res-stats{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+.res-stat .v{font-family:'JetBrains Mono';font-size:1.7rem;font-weight:700}
+.res-stat .l{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+
+/* ── SHORTCUTS ── */
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;overflow:hidden}
+.sc-h{padding:14px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .15s}
+.sc-h:hover{background:var(--surface2)}
+.sc-h h3{font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.sc-arr{transition:transform .2s;color:var(--text3)}
+.sc-arr.open{transform:rotate(90deg)}
+.sc-b{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+.sc-b.open{display:block;padding-top:14px}
+.sc-b p,.sc-b li{font-size:.82rem;color:var(--text2);line-height:1.7}
+.formula{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:12px 16px;margin:8px 0;font-family:'JetBrains Mono';font-size:.82rem;color:var(--accent);line-height:1.8;white-space:pre-wrap}
+.ex-box{background:var(--ac2D);border-left:3px solid var(--ac2);padding:9px 13px;margin:8px 0;border-radius:0 7px 7px 0;font-size:.8rem;line-height:1.7}
+.tip-box{background:var(--ac4D);border-left:3px solid var(--ac4);padding:9px 13px;margin:8px 0;border-radius:0 7px 7px 0;font-size:.8rem;line-height:1.7}
+
+/* ── PRACTICE ── */
+.pr-controls{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.pr-filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pr-filter-label{font-size:.72rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;width:70px}
+.q-counter{font-size:.78rem;color:var(--text2);font-weight:600}
+.pr-bar{height:3px;background:var(--surface2);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.pr-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--ac2));border-radius:2px;transition:width .4s}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:22px;margin-bottom:14px}
+.q-tags{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:.6rem;font-weight:700;padding:2px 9px;border-radius:14px;letter-spacing:.3px}
+.q-text{font-size:.92rem;line-height:1.7;margin-bottom:16px}
+.q-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.q-opt{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:11px 15px;cursor:pointer;font-size:.87rem;transition:all .12s;display:flex;align-items:center;gap:9px}
+.q-opt:hover{border-color:var(--ac2);background:var(--ac2D)}
+.q-opt.sel{border-color:var(--ac2);background:var(--ac2D)}
+.q-opt.ok{border-color:var(--correct);background:rgba(0,229,160,.06)}
+.q-opt.no{border-color:var(--wrong);background:rgba(255,107,107,.06)}
+.q-opt .lt{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:grid;place-items:center;font-size:.72rem;font-weight:700;flex-shrink:0;transition:all .12s}
+.q-opt.sel .lt{border-color:var(--ac2);background:var(--ac2);color:#fff}
+.q-opt.ok .lt{border-color:var(--correct);background:var(--correct);color:#000}
+.q-opt.no .lt{border-color:var(--wrong);background:var(--wrong);color:#fff}
+.qc-box{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:14px;background:var(--bg);border-radius:9px;border:1px solid var(--border);margin-bottom:14px}
+.qc-col{text-align:center;padding:6px}
+.qc-col h4{font-size:.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.qc-col .v{font-family:'JetBrains Mono';font-size:.95rem}
+.qc-vs{font-family:'Outfit';font-weight:900;color:var(--text3);font-size:1rem}
+.q-num{background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'JetBrains Mono';font-size:1rem;text-align:center;padding:8px 14px;border-radius:9px;width:150px;outline:none;margin-bottom:14px}
+.q-num:focus{border-color:var(--ac2)}
+.q-btns{display:flex;gap:8px;flex-wrap:wrap}
+.expl{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:16px;margin-top:14px;display:none}
+.expl.show{display:block}
+.expl h4{font-size:.82rem;color:var(--accent);margin-bottom:5px;font-weight:700}
+.expl .sc-lbl{color:var(--ac4);font-weight:700;font-size:.75rem;margin-top:8px;margin-bottom:2px}
+.expl p{font-size:.8rem;line-height:1.7;color:var(--text2)}
+.chart-title{font-size:.78rem;font-weight:700;margin-bottom:8px;text-align:center}
+
+/* ── CONCEPT CHIPS ── */
+.concept-chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:14px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all .15s}
+.chip:hover{border-color:var(--accent);color:var(--text)}
+.chip.on{background:var(--accentD);border-color:var(--accent);color:var(--accent)}
+
+@media(max-width:768px){
+.hero h1{font-size:1.7rem}
+.score-box{flex-direction:column;align-items:flex-start}
+.stat-row{grid-template-columns:repeat(2,1fr)}
+.arena-q{font-size:1.5rem}
+.arena{padding:22px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="go('dash')"><div class="logo-icon">Q</div>GRE <span style="color:var(--accent)">170</span></div>
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab on" onclick="go('dash')">Dashboard</button>
+    <button class="nav-tab" onclick="go('mm')">Mental Math</button>
+    <button class="nav-tab" onclick="go('sc')">Shortcuts</button>
+    <button class="nav-tab" onclick="go('pr')">Practice</button>
+  </div>
+  <div class="nav-right">
+    <div class="pill pill-streak" id="navStreak">🔥 0</div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+    <div id="authArea">
+      <button class="auth-btn" onclick="showAuthModal()" id="loginBtn" title="Sign in">👤</button>
+    </div>
+    <button class="mobile-menu" onclick="document.getElementById('navTabs').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <h2>Welcome to GRE 170</h2>
+    <p>Sign in with Google to save your progress across devices. Your data syncs automatically to the cloud.</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in with Google
+    </button>
+    <button class="modal-close" onclick="hideAuthModal()">Continue without signing in</button>
+  </div>
+</div>
+
+<!-- USER MENU -->
+<div class="user-menu" id="userMenu">
+  <div class="user-menu-email" id="userEmail">—</div>
+  <div class="user-menu-item" onclick="syncNow()">🔄 Sync Now</div>
+  <div class="user-menu-item" onclick="exportData()">📥 Export Data</div>
+  <div class="user-menu-item" onclick="signOutUser()">🚪 Sign Out</div>
+</div>
+
+<main>
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<div class="pg on" id="pg-dash">
+  <div class="hero" style="padding:14px 0 6px">
+    <h1>Train Your Brain.<br>Score <span class="grad">170</span>.</h1>
+    <p>1000+ questions · Mental math drills · Every shortcut · Cloud sync</p>
+  </div>
+  <div class="score-box" id="scoreBox">
+    <div class="score-ring" id="scoreRing"><div class="num" id="predScore">--</div><div class="lbl">Predicted</div></div>
+    <div class="score-info"><h3>📊 Predicted GRE Quant Score</h3><p id="scoreAdvice">Answer at least 20 questions to unlock score prediction.</p></div>
+  </div>
+  <div class="stat-row" id="statRow">
+    <div class="stat-card"><div class="v" style="color:var(--accent)" id="dTot">0</div><div class="l">Total Done</div></div>
+    <div class="stat-card"><div class="v" style="color:var(--correct)" id="dCor">0</div><div class="l">Correct</div></div>
+    <div class="stat-card"><div class="v" style="color:var(--wrong)" id="dWrong">0</div><div class="l">Incorrect</div></div>
+    <div class="stat-card"><div class="v" style="color:var(--ac2)" id="dAcc">0%</div><div class="l">Accuracy</div></div>
+    <div class="stat-card"><div class="v" style="color:var(--ac4)" id="dBest">0</div><div class="l">Best Streak</div></div>
+    <div class="stat-card"><div class="v" style="color:var(--ac5)" id="dAvg">--</div><div class="l">Avg Time (s)</div></div>
+  </div>
+
+  <h3 style="font-family:Outfit;font-weight:800;font-size:.92rem;margin-bottom:10px">📈 Performance by Topic</h3>
+  <table class="topic-table" id="topicTable"><thead><tr><th>Topic</th><th>Done</th><th>✅ Correct</th><th>❌ Wrong</th><th>Accuracy</th><th class="bar-cell">Progress</th></tr></thead><tbody id="topicBody"></tbody></table>
+
+  <div class="history-box"><h3>📉 Accuracy Trend</h3><div class="chart-wrap"><canvas id="histCanvas"></canvas></div></div>
+
+  <h3 style="font-family:Outfit;font-weight:800;font-size:.92rem;margin-bottom:10px">🚀 Quick Start</h3>
+  <div class="actions-grid">
+    <div class="action" onclick="go('mm')"><div class="ic" style="background:var(--accentD);color:var(--accent)">⚡</div><h3>Mental Math</h3><p>60-second speed drills</p></div>
+    <div class="action" onclick="go('sc')"><div class="ic" style="background:var(--ac2D);color:var(--ac2)">🧠</div><h3>Shortcuts</h3><p>40+ techniques</p></div>
+    <div class="action" onclick="go('pr')"><div class="ic" style="background:var(--ac3D);color:var(--ac3)">🎯</div><h3>Practice</h3><p>1000+ questions</p></div>
+    <div class="action" onclick="startMini()"><div class="ic" style="background:var(--ac4D);color:var(--ac4)">⏱️</div><h3>Mini Test</h3><p>20 random, timed</p></div>
+  </div>
+  <div style="margin-top:18px;text-align:center"><button class="btn btn-danger" onclick="if(confirm('Reset ALL progress?')){resetAll()}">🗑️ Reset Progress</button></div>
+</div>
+
+<!-- ═══════════ MENTAL MATH ═══════════ -->
+<div class="pg" id="pg-mm">
+  <div class="sec-hdr"><h2>⚡ Mental Math Gym</h2><button class="back-btn" onclick="go('dash')">← Back</button></div>
+  <div class="cfg-row" id="mmTypes">
+    <button class="cfg on" onclick="setMM(this,'add')">Addition</button>
+    <button class="cfg" onclick="setMM(this,'sub')">Subtraction</button>
+    <button class="cfg" onclick="setMM(this,'mul')">Multiply</button>
+    <button class="cfg" onclick="setMM(this,'div')">Division</button>
+    <button class="cfg" onclick="setMM(this,'pct')">Percent</button>
+    <button class="cfg" onclick="setMM(this,'sq')">Squares</button>
+    <button class="cfg" onclick="setMM(this,'frac')">Fractions</button>
+    <button class="cfg" onclick="setMM(this,'pow')">Powers</button>
+    <button class="cfg" onclick="setMM(this,'mix')">🔀 Mixed</button>
+  </div>
+  <div class="cfg-row" id="mmDiffs">
+    <span style="font-size:.78rem;color:var(--text2);align-self:center">Level:</span>
+    <button class="cfg on" onclick="setMMD(this,'easy')">Easy</button>
+    <button class="cfg" onclick="setMMD(this,'med')">Medium</button>
+    <button class="cfg" onclick="setMMD(this,'hard')">Hard</button>
+    <button class="cfg" onclick="setMMD(this,'insane')">🔥 Insane</button>
+  </div>
+  <div class="arena" id="mmArena">
+    <div id="mmIdle" style="display:flex;flex-direction:column;align-items:center"><p style="font-size:1rem;margin-bottom:5px">Ready to train?</p><p style="font-size:.8rem;color:var(--text2);margin-bottom:18px">60-second blitz. Type fast.</p><button class="start-btn" onclick="startMM()">START DRILL</button></div>
+    <div id="mmActive" style="display:none;width:100%;flex-direction:column;align-items:center"><div class="arena-timer" id="mmTimerEl">60</div><div class="arena-score">Score: <span id="mmScoreLive">0</span></div><div class="arena-q" id="mmQ"></div><input type="text" class="arena-input mono" id="mmInput" autocomplete="off" inputmode="decimal" placeholder="?"><div class="arena-streak" id="mmStreakEl"></div><div class="arena-fb" id="mmFb"></div></div>
+    <div id="mmRes" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ═══════════ SHORTCUTS ═══════════ -->
+<div class="pg" id="pg-sc">
+  <div class="sec-hdr"><h2>🧠 Shortcut Arsenal</h2><button class="back-btn" onclick="go('dash')">← Back</button></div>
+  <div class="tabs" id="scTabs"></div>
+  <div id="scGrid" style="margin-top:12px"></div>
+</div>
+
+<!-- ═══════════ PRACTICE ═══════════ -->
+<div class="pg" id="pg-pr">
+  <div class="sec-hdr"><h2>🎯 Practice Arena</h2><button class="back-btn" onclick="go('dash')">← Back</button></div>
+  <div class="pr-controls">
+    <div class="pr-filter-row"><span class="pr-filter-label">Topic</span><div class="tabs" id="prTopicTabs"></div></div>
+    <div class="pr-filter-row"><span class="pr-filter-label">Difficulty</span><div class="tabs" id="prDiffTabs"></div></div>
+    <div class="pr-filter-row"><span class="pr-filter-label">Concept</span><div class="concept-chips" id="prConcepts"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="q-counter" id="qCtr">Q 1</div><button class="btn btn-s" onclick="loadBatch()" style="font-size:.72rem;padding:5px 12px">↻ New Batch</button></div>
+  </div>
+  <div class="pr-bar"><div class="pr-fill" id="prFill" style="width:0"></div></div>
+  <div id="prArea"></div>
+  <div style="text-align:center;margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-ac2" onclick="nextQ()">Next Question →</button>
+    <button class="btn btn-s" onclick="loadBatch()">Load 10 More</button>
+  </div>
+</div>
+</main>
+
+<!-- Firebase SDKs (v9 compat for simplicity on GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════
+   🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN
+   ═══════════════════════════════════════════
+   To enable Google Sign-In & cloud sync:
+   1. Go to https://console.firebase.google.com
+   2. Create a new project (or use existing)
+   3. Enable Authentication → Google sign-in
+   4. Enable Cloud Firestore (start in test mode)
+   5. Go to Project Settings → Your apps → Web
+   6. Copy your config and paste below
+   7. Add your GitHub Pages URL to Auth → Settings → Authorized domains
+*/
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+let firebaseReady = false;
+let db = null;
+let auth = null;
+let currentUser = null;
+
+try {
+  if (FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY_HERE") {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    firebaseReady = true;
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      updateAuthUI();
+      if (user) loadCloudData();
+    });
+  }
+} catch(e) { console.log('Firebase not configured, using localStorage only'); }
+
+function showAuthModal() {
+  if (!firebaseReady) { alert('Firebase not configured yet.\\n\\nTo enable Google Sign-In:\\n1. Create a Firebase project at console.firebase.google.com\\n2. Enable Google Authentication\\n3. Enable Firestore\\n4. Replace the FIREBASE_CONFIG in index.html\\n5. Add your GitHub Pages domain to authorized domains\\n\\nYour progress is still saved locally!'); return; }
+  if (currentUser) { toggleUserMenu(); return; }
+  document.getElementById('authModal').classList.add('show');
+}
+function hideAuthModal() { document.getElementById('authModal').classList.remove('show'); }
+function toggleUserMenu() {
+  const m = document.getElementById('userMenu');
+  m.classList.toggle('show');
+  setTimeout(() => document.addEventListener('click', function closeMenu(e) { if (!m.contains(e.target)) { m.classList.remove('show'); document.removeEventListener('click', closeMenu); } }), 10);
+}
+
+async function signInWithGoogle() {
+  if (!firebaseReady) return;
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    hideAuthModal();
+  } catch(e) { console.error('Auth error:', e); alert('Sign-in failed: ' + e.message); }
+}
+
+async function signOutUser() {
+  if (auth) await auth.signOut();
+  currentUser = null;
+  updateAuthUI();
+  document.getElementById('userMenu').classList.remove('show');
+}
+
+function updateAuthUI() {
+  const area = document.getElementById('authArea');
+  if (currentUser) {
+    const img = currentUser.photoURL || '';
+    area.innerHTML = img
+      ? `<img class="user-avatar" src="${img}" onclick="toggleUserMenu()" title="${currentUser.displayName}">`
+      : `<button class="auth-btn" onclick="toggleUserMenu()" title="${currentUser.displayName}">😊</button>`;
+    document.getElementById('userEmail').textContent = currentUser.email;
+  } else {
+    area.innerHTML = `<button class="auth-btn" onclick="showAuthModal()" id="loginBtn" title="Sign in">👤</button>`;
+  }
+}
+
+async function saveToCloud() {
+  if (!firebaseReady || !currentUser || !db) return;
+  try { await db.collection('users').doc(currentUser.uid).set({ progress: JSON.stringify(S), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); } catch(e) { console.error('Cloud save error:', e); }
+}
+
+async function loadCloudData() {
+  if (!firebaseReady || !currentUser || !db) return;
+  try {
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    if (doc.exists && doc.data().progress) {
+      const cloud = JSON.parse(doc.data().progress);
+      if (cloud.totalAnswered > S.totalAnswered) { S = cloud; S.version = 4; saveLocal(); renderDash(); }
+      else if (S.totalAnswered > cloud.totalAnswered) { saveToCloud(); }
+    } else { saveToCloud(); }
+  } catch(e) { console.error('Cloud load error:', e); }
+}
+
+function syncNow() { saveToCloud().then(() => alert('Synced to cloud!')); document.getElementById('userMenu').classList.remove('show'); }
+function exportData() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gre170_progress.json'; a.click();
+  document.getElementById('userMenu').classList.remove('show');
+}
+
+// ═══════ STATE ═══════
+const LS = 'gre170_v4';
+let S = loadLocal();
+function loadLocal() {
+  try { const d = JSON.parse(localStorage.getItem(LS)); if (d && d.version === 4) return d; } catch(e) {}
+  return { version:4, totalAnswered:0, totalCorrect:0, bestStreak:0, streak:0, mmDone:0, topics:{
+    arithmetic:{done:0,correct:0}, algebra:{done:0,correct:0}, geometry:{done:0,correct:0}, coordinate:{done:0,correct:0}, data:{done:0,correct:0}
+  }, history:[], times:[] };
+}
+function saveLocal() { localStorage.setItem(LS, JSON.stringify(S)); }
+function saveAll() { saveLocal(); saveToCloud(); }
+function resetAll() { S = loadLocal.__proto__ ? { version:4,totalAnswered:0,totalCorrect:0,bestStreak:0,streak:0,mmDone:0,topics:{arithmetic:{done:0,correct:0},algebra:{done:0,correct:0},geometry:{done:0,correct:0},coordinate:{done:0,correct:0},data:{done:0,correct:0}},history:[],times:[] } : loadLocal(); localStorage.removeItem(LS); S = {version:4,totalAnswered:0,totalCorrect:0,bestStreak:0,streak:0,mmDone:0,topics:{arithmetic:{done:0,correct:0},algebra:{done:0,correct:0},geometry:{done:0,correct:0},coordinate:{done:0,correct:0},data:{done:0,correct:0}},history:[],times:[]}; saveAll(); renderDash(); }
+
+// ═══════ THEME ═══════
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('gre170_theme', t);
+}
+(function(){ const t = localStorage.getItem('gre170_theme'); if(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('themeBtn').textContent=t==='dark'?'🌙':'☀️';}})();
+
+// ═══════ NAV ═══════
+function go(pg) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  document.querySelectorAll('.nav-tab').forEach((b,i) => b.classList.toggle('on', i === {dash:0,mm:1,sc:2,pr:3}[pg]));
+  document.getElementById('navTabs').classList.remove('open');
+  window.scrollTo(0,0);
+  if (pg==='dash') renderDash();
+  if (pg==='sc') renderSC();
+  if (pg==='pr') { if(!prInit) initPR(); renderQ(); }
+}
+
+// ═══════ DASHBOARD ═══════
+const TOPICS = [
+  {k:'arithmetic',n:'Arithmetic',icon:'🔢',c:'var(--accent)'},
+  {k:'algebra',n:'Algebra',icon:'📐',c:'var(--ac2)'},
+  {k:'geometry',n:'Geometry',icon:'📏',c:'var(--ac3)'},
+  {k:'coordinate',n:'Coord. Geometry',icon:'📍',c:'var(--ac4)'},
+  {k:'data',n:'Data Analysis',icon:'📊',c:'var(--ac5)'}
+];
+
+function renderDash() {
+  const s = S;
+  document.getElementById('dTot').textContent = s.totalAnswered;
+  document.getElementById('dCor').textContent = s.totalCorrect;
+  document.getElementById('dWrong').textContent = s.totalAnswered - s.totalCorrect;
+  document.getElementById('dAcc').textContent = s.totalAnswered ? Math.round(s.totalCorrect/s.totalAnswered*100)+'%' : '0%';
+  document.getElementById('dBest').textContent = s.bestStreak;
+  document.getElementById('dAvg').textContent = s.times.length ? (s.times.reduce((a,b)=>a+b,0)/s.times.length).toFixed(1) : '--';
+  document.getElementById('navStreak').textContent = '🔥 ' + s.streak;
+
+  const pred = s.totalAnswered >= 20 ? Math.min(170, Math.max(130, 130+Math.round(40*Math.pow(Math.min(1,s.totalCorrect/s.totalAnswered*1.05+.02),.75)))) : null;
+  document.getElementById('predScore').textContent = pred || '--';
+  if (pred) {
+    const p = (pred-130)/40; const h = p*120;
+    document.getElementById('scoreRing').style.borderColor = `hsl(${h},80%,50%)`;
+    document.querySelector('.score-ring .num').style.color = `hsl(${h},80%,50%)`;
+  }
+  document.getElementById('scoreAdvice').textContent = !pred ? 'Answer at least 20 questions to unlock.' : pred>=168 ? '🏆 170-level performance! Maintain accuracy.' : pred>=165 ? '🔥 Excellent! Eliminate careless errors to hit 170.' : pred>=160 ? '👍 Strong! Work on weak topics & QC strategies.' : pred>=155 ? '📈 Good! Drill mental math & learn shortcuts.' : pred>=150 ? '💪 Building up! Master arithmetic shortcuts first.' : '🌱 Keep going! Focus one topic at a time.';
+
+  // Topic table
+  document.getElementById('topicBody').innerHTML = TOPICS.map(t => {
+    const d = s.topics[t.k]; const wrong = d.done - d.correct;
+    const acc = d.done ? Math.round(d.correct/d.done*100) : 0;
+    return `<tr><td style="font-weight:600">${t.icon} ${t.n}</td><td>${d.done}</td><td class="correct-col">${d.correct}</td><td class="wrong-col">${wrong}</td><td>${acc}%</td><td class="bar-cell"><div class="mini-bar"><div class="mini-bar-fill" style="width:${acc}%;background:${t.c}"></div></div></td></tr>`;
+  }).join('') + `<tr style="font-weight:700;background:var(--surface2)"><td>TOTAL</td><td>${s.totalAnswered}</td><td class="correct-col">${s.totalCorrect}</td><td class="wrong-col">${s.totalAnswered-s.totalCorrect}</td><td>${s.totalAnswered?Math.round(s.totalCorrect/s.totalAnswered*100):0}%</td><td></td></tr>`;
+
+  drawHist();
+}
+
+function drawHist() {
+  const c = document.getElementById('histCanvas'); const ctx = c.getContext('2d');
+  c.width = c.parentElement.offsetWidth; c.height = 180; ctx.clearRect(0,0,c.width,c.height);
+  const h = S.history.slice(-30); if(h.length<2){ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text3');ctx.font='12px DM Sans';ctx.textAlign='center';ctx.fillText('Answer more questions to see trends',c.width/2,90);return;}
+  const W=c.width,H=c.height,p={l:36,r:16,t:16,b:24},pw=W-p.l-p.r,ph=H-p.t-p.b;
+  const tc=getComputedStyle(document.documentElement).getPropertyValue('--text3').trim();
+  const lc=getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  const ac=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+  ctx.strokeStyle=lc;ctx.lineWidth=.5;ctx.font='9px JetBrains Mono';ctx.fillStyle=tc;ctx.textAlign='right';
+  for(let i=0;i<=4;i++){const y=p.t+ph*(1-i/4);ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke();ctx.fillText(i*25+'%',p.l-4,y+3);}
+  ctx.strokeStyle=ac;ctx.lineWidth=2;ctx.lineJoin='round';ctx.beginPath();
+  h.forEach((pt,i)=>{const x=p.l+i/(h.length-1)*pw;const a=pt.t?pt.c/pt.t:0;const y=p.t+ph-a*ph;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  h.forEach((pt,i)=>{const x=p.l+i/(h.length-1)*pw;const a=pt.t?pt.c/pt.t:0;const y=p.t+ph-a*ph;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fillStyle=ac;ctx.fill();});
+}
+
+// ═══════ MENTAL MATH ═══════
+let mmT='add',mmD='easy',mmTimer=null,mmTL=60,mmSc=0,mmSt=0,mmBs=0,mmAn=0,mmTt=0;
+function setMM(b,t){document.querySelectorAll('#mmTypes .cfg').forEach(x=>x.classList.remove('on'));b.classList.add('on');mmT=t;}
+function setMMD(b,d){document.querySelectorAll('#mmDiffs .cfg').forEach(x=>x.classList.remove('on'));b.classList.add('on');mmD=d;}
+const Ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Ri(0,a.length-1)];
+const shuf=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Ri(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;};
+
+function genMM(){
+  const lo={easy:2,med:10,hard:20,insane:50}[mmD],hi={easy:20,med:99,hard:200,insane:999}[mmD];
+  const ts=mmT==='mix'?['add','sub','mul','div','pct','sq','frac','pow']:[mmT];const t=pick(ts);let q,a;
+  switch(t){
+    case'add':{let x=Ri(lo,hi),y=Ri(lo,hi);q=`${x} + ${y}`;a=x+y;break}
+    case'sub':{let x=Ri(lo,hi),y=Ri(lo,Math.min(x,hi));q=`${x} − ${y}`;a=x-y;break}
+    case'mul':{let mx={easy:12,med:25,hard:50,insane:99}[mmD],x=Ri(2,mx),y=Ri(2,mmD==='insane'?30:15);q=`${x} × ${y}`;a=x*y;break}
+    case'div':{let y=Ri(2,{easy:10,med:15,hard:25,insane:40}[mmD]),m=Ri(2,{easy:10,med:20,hard:40,insane:60}[mmD]);q=`${y*m} ÷ ${y}`;a=m;break}
+    case'pct':{let p=pick([5,10,15,20,25,30,40,50,60,75]),b=Ri(2,{easy:20,med:50,hard:100,insane:200}[mmD])*10;q=`${p}% of ${b}`;a=p*b/100;break}
+    case'sq':{let x=Ri(2,{easy:15,med:25,hard:35,insane:50}[mmD]);if(Math.random()<.3&&mmD!=='easy'){q=`${x}³`;a=x**3}else{q=`${x}²`;a=x**2}break}
+    case'frac':{let[n,d]=pick([[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[1,6],[5,6],[1,8],[3,8],[5,8],[7,8]]),b=d*Ri(2,{easy:10,med:20,hard:30,insane:50}[mmD]);q=`${n}/${d} of ${b}`;a=n*b/d;break}
+    case'pow':{let b=Ri(2,{easy:5,med:8,hard:10,insane:12}[mmD]),e=Ri(2,{easy:3,med:4,hard:5,insane:6}[mmD]);if(b>5)e=Math.min(e,3);q=`${b}^${e}`;a=b**e;break}
+  }
+  return{q,a:Math.round(a*1000)/1000};
+}
+function startMM(){
+  mmSc=0;mmSt=0;mmBs=0;mmTt=0;mmTL=60;
+  document.getElementById('mmIdle').style.display='none';document.getElementById('mmRes').style.display='none';
+  const act=document.getElementById('mmActive');act.style.display='flex';
+  document.getElementById('mmScoreLive').textContent='0';document.getElementById('mmTimerEl').textContent='60';document.getElementById('mmTimerEl').style.color='var(--accent)';document.getElementById('mmFb').textContent='';document.getElementById('mmStreakEl').innerHTML='';
+  nxtMM();document.getElementById('mmInput').focus();document.getElementById('mmInput').onkeydown=mmKey;
+  mmTimer=setInterval(()=>{mmTL--;document.getElementById('mmTimerEl').textContent=mmTL;if(mmTL<=10)document.getElementById('mmTimerEl').style.color='var(--ac3)';if(mmTL<=0)endMM();},1000);
+}
+function nxtMM(){const p=genMM();mmAn=p.a;document.getElementById('mmQ').textContent=p.q;const i=document.getElementById('mmInput');i.value='';i.className='arena-input mono';}
+function mmKey(e){if(e.key==='Enter'){const i=document.getElementById('mmInput'),v=parseFloat(i.value);if(isNaN(v))return;mmTt++;
+  if(Math.abs(v-mmAn)<.01){mmSc++;mmSt++;if(mmSt>mmBs)mmBs=mmSt;i.className='arena-input mono ok';document.getElementById('mmFb').innerHTML='<span style="color:var(--correct)">✓</span>';document.getElementById('mmScoreLive').textContent=mmSc;if(mmSt>=3)document.getElementById('mmStreakEl').innerHTML=`🔥 ${mmSt}`;}
+  else{mmSt=0;i.className='arena-input mono no';document.getElementById('mmFb').innerHTML=`<span style="color:var(--wrong)">✗ ${mmAn}</span>`;document.getElementById('mmStreakEl').innerHTML='';}
+  setTimeout(nxtMM,300);}}
+function endMM(){
+  clearInterval(mmTimer);document.getElementById('mmInput').onkeydown=null;document.getElementById('mmActive').style.display='none';
+  const acc=mmTt?Math.round(mmSc/mmTt*100):0;S.mmDone++;if(mmBs>S.bestStreak)S.bestStreak=mmBs;S.history.push({c:mmSc,t:mmTt});if(S.history.length>100)S.history=S.history.slice(-100);saveAll();
+  const g=acc>=95?'🏆 LEGENDARY':acc>=80?'🔥 Excellent':acc>=60?'👍 Good':'💪 Keep Going';
+  document.getElementById('mmRes').style.display='block';document.getElementById('mmRes').innerHTML=`<h3 style="font-family:Outfit;font-weight:900;font-size:1.2rem;margin-bottom:14px">${g}</h3><div class="res-stats"><div class="res-stat"><div class="v" style="color:var(--accent)">${mmSc}</div><div class="l">Correct</div></div><div class="res-stat"><div class="v">${mmTt}</div><div class="l">Attempted</div></div><div class="res-stat"><div class="v" style="color:var(--ac2)">${acc}%</div><div class="l">Accuracy</div></div><div class="res-stat"><div class="v" style="color:var(--ac4)">${mmBs}🔥</div><div class="l">Best Streak</div></div></div><button class="start-btn" onclick="startMM()">GO AGAIN</button> <button class="back-btn" style="margin-left:8px" onclick="document.getElementById('mmRes').style.display='none';document.getElementById('mmIdle').style.display='flex';">Settings</button>`;
+}
+
+// ═══════ SHORTCUTS ═══════
+const SC=[
+{c:'arithmetic',t:'Multiplying by 11',b:`<p>Split digits, put sum in middle.</p><div class="formula">ab × 11 = a(a+b)b   Carry if sum≥10</div><div class="ex-box"><b>36×11→396 · 85×11→935</b></div>`},
+{c:'arithmetic',t:'Squaring Numbers Ending in 5',b:`<div class="formula">n5² = n(n+1) | 25</div><div class="ex-box">35²=1225 · 75²=5625</div>`},
+{c:'arithmetic',t:'Difference of Squares Trick',b:`<div class="formula">a×b = ((a+b)/2)² − ((a−b)/2)²</div><div class="ex-box">48×52 = 50²−2² = 2496</div>`},
+{c:'arithmetic',t:'Fraction↔Decimal Must-Knows',b:`<div class="formula">1/2=.5  1/3=.333 1/4=.25 1/5=.2 1/6=.167\n1/7≈.143 1/8=.125 1/9=.111 1/11≈.091\n3/8=.375 5/8=.625 7/8=.875</div>`},
+{c:'arithmetic',t:'Percentage Swap',b:`<div class="formula">x% of y = y% of x\nSuccessive: a%+b%+ab/100</div><div class="ex-box">+20% then −10% = 20−10−2 = +8%</div>`},
+{c:'arithmetic',t:'Divisibility Rules',b:`<div class="formula">÷3:digit sum  ÷4:last 2 digits  ÷6:÷2&÷3\n÷8:last 3 digits  ÷9:digit sum  ÷11:alt sum</div>`},
+{c:'arithmetic',t:'Remainder Cyclicity',b:`<div class="formula">Powers of 2 mod 10: 2,4,8,6 (cycle 4)\nPowers of 3 mod 10: 3,9,7,1 (cycle 4)\nPowers of 7 mod 10: 7,9,3,1 (cycle 4)</div>`},
+{c:'arithmetic',t:'Multiply by 5/25/50',b:`<div class="formula">×5 = ×10÷2   ×25 = ×100÷4   ×50 = ×100÷2</div>`},
+{c:'arithmetic',t:'LCM & GCD',b:`<div class="formula">LCM(a,b) = a×b/GCD(a,b)\nGCD: prime factorize → min powers\nLCM: prime factorize → max powers</div>`},
+{c:'arithmetic',t:'Estimation',b:`<div class="formula">√2≈1.414 √3≈1.732 √5≈2.236 π≈3.14\nRound to friendly numbers when choices spread</div>`},
+{c:'algebra',t:'Backsolving',b:`<p>Start with choice C (middle). Too big→go smaller.</p><div class="tip-box">When: "What is the value of" + integer choices</div>`},
+{c:'algebra',t:'Plugging In Numbers',b:`<div class="formula">Use 2,3,5,10,100. Avoid 0 and 1.\nWork through, check which answer matches.</div>`},
+{c:'algebra',t:'Quadratic Identities',b:`<div class="formula">(a+b)²=a²+2ab+b²  (a−b)²=a²−2ab+b²\n(a+b)(a−b)=a²−b²\na²+b²=(a+b)²−2ab</div>`},
+{c:'algebra',t:'Inequalities',b:`<div class="formula">×negative→FLIP  a>b>0→1/a<1/b\n|x|<a→−a<x<a  |x|>a→x>a OR x<−a\nx²<9→−3<x<3</div>`},
+{c:'algebra',t:'Systems: Add/Subtract',b:`<p>If asked for x+y or xy, try combining equations directly.</p>`},
+{c:'algebra',t:'Exponent Rules',b:`<div class="formula">aᵐ·aⁿ=aᵐ⁺ⁿ  aᵐ/aⁿ=aᵐ⁻ⁿ  (aᵐ)ⁿ=aᵐⁿ\na⁰=1  a⁻ⁿ=1/aⁿ  Same base→equate exp</div>`},
+{c:'algebra',t:'Sequences',b:`<div class="formula">Arith: aₙ=a₁+(n−1)d  Sum=n(a₁+aₙ)/2\nGeo: aₙ=a₁·rⁿ⁻¹  Sum=a₁(1−rⁿ)/(1−r)</div>`},
+{c:'algebra',t:'Word→Equation',b:`<div class="formula">"is"→=  "of"→×  "more than"→+\n"less than"→−  "per"→÷  "twice"→2×</div>`},
+{c:'geometry',t:'Special Triangles',b:`<div class="formula">30-60-90: x:x√3:2x\n45-45-90: x:x:x√2\nTriples: 3-4-5, 5-12-13, 8-15-17, 7-24-25</div>`},
+{c:'geometry',t:'Circle Formulas',b:`<div class="formula">C=2πr  A=πr²\nArc=(θ/360)·2πr  Sector=(θ/360)·πr²</div>`},
+{c:'geometry',t:'Volume Formulas',b:`<div class="formula">Cylinder:πr²h  Cone:⅓πr²h  Sphere:4/3πr³\nCube:s³  Rectangular:lwh</div>`},
+{c:'geometry',t:'Inscribed Circle (Right △)',b:`<div class="formula">r = (a+b−c)/2  (legs a,b; hyp c)</div><div class="ex-box">Legs 8,15→hyp 17→r=3</div>`},
+{c:'geometry',t:'Similar Figures',b:`<div class="formula">Side ratio k → Area ratio k² → Volume k³</div>`},
+{c:'geometry',t:'Polygon Angles',b:`<div class="formula">Sum interior=(n−2)·180°\nEach(regular)=(n−2)·180°/n\nExterior always sum to 360°</div>`},
+{c:'coordinate',t:'Core Formulas',b:`<div class="formula">Dist=√((Δx)²+(Δy)²)\nMidpoint=((x₁+x₂)/2,(y₁+y₂)/2)\nSlope=(y₂−y₁)/(x₂−x₁)</div>`},
+{c:'coordinate',t:'Line Shortcuts',b:`<div class="formula">Ax+By=C → slope=−A/B, y-int=C/B\nParallel=same slope  Perp=neg reciprocal</div>`},
+{c:'coordinate',t:'Reflections',b:`<div class="formula">x-axis:(x,−y) y-axis:(−x,y)\nOrigin:(−x,−y) y=x:(y,x)</div>`},
+{c:'coordinate',t:'Circle Equation',b:`<div class="formula">(x−h)²+(y−k)²=r²  Center(h,k)</div>`},
+{c:'coordinate',t:'Shoelace Area',b:`<div class="formula">½|x₁(y₂−y₃)+x₂(y₃−y₁)+x₃(y₁−y₂)|</div>`},
+{c:'data',t:'Mean/Median/Mode',b:`<div class="formula">Mean=Sum/Count  Median=middle value\nWeighted avg=Σ(val×wt)/Σwt</div>`},
+{c:'data',t:'Std Dev Intuition',b:`<div class="formula">More spread→higher SD  All same→SD=0\n+constant→SD same  ×k→SD×|k|</div>`},
+{c:'data',t:'Probability',b:`<div class="formula">P(A∩B)=P(A)·P(B) [indep]\nP(A∪B)=P(A)+P(B)−P(A∩B)\nP(at least 1)=1−P(none)</div>`},
+{c:'data',t:'Combinations',b:`<div class="formula">nCr=n!/(r!(n−r)!)  Cancel before multiply\nnPr=n!/(n−r)!</div>`},
+{c:'data',t:'Normal Distribution',b:`<div class="formula">68% within 1SD  95% within 2SD  99.7% within 3SD</div>`},
+{c:'data',t:'Venn Diagrams',b:`<div class="formula">Total = A+B−Both+Neither</div>`},
+{c:'data',t:'Counting Principles',b:`<div class="formula">Fundamental: A ways × B ways\nCircular: (n−1)!  With repetition: nʳ</div>`},
+{c:'strategy',t:'QC Strategy',b:`<div class="formula">Plug WEIRD #s: 0,1,−1,½,big\n2 different results → D</div>`},
+{c:'strategy',t:'Time Management',b:`<div class="formula">~1.75 min/Q. Easy<1min Med~1.5 Hard~2.5\nFlag & skip after 2.5 min</div>`},
+{c:'strategy',t:'Estimation',b:`<div class="formula">If choices spread→rough math is enough\nCross-multiply to compare fractions</div>`},
+{c:'strategy',t:'Process of Elimination',b:`<p>Eliminate wrong answers first. Even removing 1-2 helps odds dramatically.</p>`},
+];
+function renderSC(){
+  const cats=['all','arithmetic','algebra','geometry','coordinate','data','strategy'];
+  const labs=['All','Arithmetic','Algebra','Geometry','Coord Geo','Data','Strategy'];
+  document.getElementById('scTabs').innerHTML=cats.map((c,i)=>`<button class="tab${i===0?' on':''}" onclick="fSC(this,'${c}')">${labs[i]}</button>`).join('');
+  fSC(document.querySelector('#scTabs .tab.on'),'all');
+}
+function fSC(b,c){
+  document.querySelectorAll('#scTabs .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  const col={arithmetic:['var(--accentD)','var(--accent)','ARITH'],algebra:['var(--ac2D)','var(--ac2)','ALGEBRA'],geometry:['var(--ac3D)','var(--ac3)','GEO'],coordinate:['var(--ac4D)','var(--ac4)','COORD'],data:['var(--ac5D)','var(--ac5)','DATA'],strategy:['rgba(200,200,200,.06)','var(--text2)','STRAT']};
+  const f=c==='all'?SC:SC.filter(s=>s.c===c);
+  document.getElementById('scGrid').innerHTML=f.map(s=>{const[bg,fg,lb]=col[s.c]||['','',''];return`<div class="sc"><div class="sc-h" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.sc-arr').classList.toggle('open')"><h3><span class="badge" style="background:${bg};color:${fg}">${lb}</span>${s.t}</h3><span class="sc-arr">▸</span></div><div class="sc-b">${s.b}</div></div>`;}).join('');
+}
+
+// ═══════ QUESTION GENERATORS ═══════
+// Concept sub-categories for filtering
+const CONCEPTS = {
+  arithmetic: ['Remainders','Percentages','Divisibility','Exponents','Fractions','LCM/GCD','Ratios','Sequences','Absolute Value','Radicals'],
+  algebra: ['Linear Equations','Quadratics','Inequalities','Systems','Functions','Exponents','Absolute Value','Word Problems','Sequences','Factoring'],
+  geometry: ['Triangles','Circles','Rectangles','Cylinders','Angles','Special Triangles','Area','Pythagorean','Similar Figures','Polygons'],
+  coordinate: ['Distance','Slope','Midpoint','Intercepts','Perpendicular','Area','Circle Eq','Reflections','Line Evaluation','Parallel Lines'],
+  data: ['Mean/Median','Probability','Combinations','Std Deviation','Median','Venn Diagrams','Percentages','Bar Charts','Pie Charts','Line Charts']
+};
+const DIFFS = ['Easy','Medium','Hard'];
+
+function genQ(cat, diff, concept) {
+  const gens = {
+    arithmetic:[gAR,gAP,gAD,gAE,gAF,gAL,gARa,gASq,gAAb,gARd],
+    algebra:[gLL,gLQ,gLI,gLS,gLF,gLE,gLA,gLW,gLSq,gLFa],
+    geometry:[gGT,gGC,gGR,gGCy,gGA,gGS,gGAr,gGP,gGSi,gGPo],
+    coordinate:[gCD,gCS,gCM,gCI,gCP,gCA,gCC,gCR,gCL,gCPa],
+    data:[gDM,gDP,gDC,gDS,gDMe,gDV,gDPe,gDCh1,gDCh2,gDCh3]
+  };
+  const fns = gens[cat] || gens.arithmetic;
+  let idx = concept !== undefined ? concept : Ri(0, fns.length - 1);
+  if (idx >= fns.length) idx = Ri(0, fns.length - 1);
+  const q = fns[idx](diff || pick(DIFFS));
+  q.concept = CONCEPTS[cat]?.[idx] || '';
+  return q;
+}
+
+// Helper
+function gcd(a,b){while(b){[a,b]=[b,a%b]}return a}
+function wrongSet(ans,n=4,spread=null){
+  const s=new Set([ans]);const sp=spread||[...Array(10)].map((_,i)=>i-5).filter(x=>x!==0);
+  let tries=0;while(s.size<n&&tries<50){s.add(Math.round((ans+pick(sp))*100)/100);tries++;}
+  return shuf([...s]);
+}
+
+// ═══ ARITHMETIC ═══
+function gAR(d){const b=pick([2,3,4,5,7,8,9]),m=pick([3,4,5,6,7,8,9,10,11]),e=Ri(10,50);let r=1;for(let i=0;i<e;i++)r=(r*b)%m;const o=wrongSet(r,4,[1,-1,2,-2,3]);return{cat:'arithmetic',type:'mc',diff:d,text:`What is the remainder when ${b}<sup>${e}</sup> is divided by ${m}?`,options:o.map(String),answer:o.indexOf(r),explanation:`Powers of ${b} mod ${m} cycle. Compute: 3¹≡${b%m}, etc. Find cycle, then ${e} mod cycle_len → position. Remainder=${r}.`,shortcut:'Cyclicity: find the repeating pattern of remainders, then use exponent mod cycle_length.'};}
+function gAP(d){const p1=pick([10,15,20,25,30]),p2=pick([10,15,20,25,30]);const n=p1+(-p2)+(p1*(-p2))/100;const a=parseFloat(n.toFixed(1));const as=a>0?`+${a}%`:`${a}%`;const o=shuf([as,`${p1-p2>0?'+':''}${p1-p2}%`,`${-(p1-p2)>0?'+':''}${-(p1-p2)}%`,`${(a+2)>0?'+':''}${a+2}%`]);return{cat:'arithmetic',type:'mc',diff:d,text:`Price up ${p1}% then down ${p2}%. Net change?`,options:o,answer:o.indexOf(as),explanation:`Successive %: ${p1}+(−${p2})+(${p1})(−${p2})/100=${a}%.`,shortcut:'a+b+ab/100'};}
+function gAD(d){const n=Ri(100,999)*Ri(2,9),dv=pick([3,4,6,7,8,9,11]);const yes=n%dv===0;return{cat:'arithmetic',type:'mc',diff:d,text:`Is ${n} divisible by ${dv}?`,options:['Yes','No'],answer:yes?0:1,explanation:`Apply divisibility rule for ${dv}. Answer: ${yes?'Yes':'No'}.`,shortcut:`÷${dv} rule: ${({3:'digit sum÷3',4:'last 2 digits÷4',6:'÷2 AND ÷3',7:'check directly',8:'last 3 digits÷8',9:'digit sum÷9',11:'alternating sum÷11'})[dv]}`};}
+function gAE(d){const b=pick([2,3,4,5]),e1=Ri(2,6),e2=Ri(2,6);const op=pick(['×','÷']);let a;if(op==='×')a=e1+e2;else{const big=Math.max(e1,e2),sm=Math.min(e1,e2);a=big-sm;}const o=wrongSet(a,4,[-2,-1,1,2]);return{cat:'arithmetic',type:'mc',diff:d,text:`${b}<sup>${op==='×'?e1:Math.max(e1,e2)}</sup> ${op} ${b}<sup>${op==='×'?e2:Math.min(e1,e2)}</sup> = ${b}<sup>?</sup>`,options:o.map(String),answer:o.indexOf(a),explanation:`${op==='×'?'Add':'Subtract'} exponents: ${a}.`,shortcut:'Same base: multiply→add exp, divide→subtract exp.'};}
+function gAF(d){const fs=[[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[1,6],[5,6],[1,8],[3,8],[5,8],[7,8]];const[n1,d1]=pick(fs),[n2,d2]=pick(fs);const op=pick(['+','−','×']);let a;if(op==='+')a=n1/d1+n2/d2;else if(op==='−')a=Math.abs(n1/d1-n2/d2);else a=(n1/d1)*(n2/d2);a=Math.round(a*1000)/1000;const o=wrongSet(a,4,[-.25,-.1,.1,.25,.5]);return{cat:'arithmetic',type:'mc',diff:d,text:`${n1}/${d1} ${op} ${n2}/${d2} = ?`,options:o.map(String),answer:o.indexOf(a),explanation:`Convert to decimals: ${(n1/d1).toFixed(3)} ${op} ${(n2/d2).toFixed(3)} ≈ ${a}`,shortcut:'Know fraction↔decimal conversions cold.'};}
+function gAL(d){const a=Ri(4,30)*pick([2,3,5]),b=Ri(4,30)*pick([2,3,5]);const g=gcd(a,b),l=a*b/g;const isL=Math.random()<.5;const ans=isL?l:g;const o=wrongSet(ans,4,[-10,-5,5,10,20].map(x=>x*(ans>100?10:1)));return{cat:'arithmetic',type:'mc',diff:d,text:`What is the ${isL?'LCM':'GCD'} of ${a} and ${b}?`,options:o.filter(v=>v>0).slice(0,4).length>=4?o.filter(v=>v>0).slice(0,4):wrongSet(ans,4,[1,2,3,5]).filter(v=>v>0),get answer(){return this.options.map(String).indexOf(String(ans))},explanation:`${isL?'LCM':'GCD'}(${a},${b})=${ans}.`,shortcut:'LCM=a×b/GCD. Find GCD first via Euclidean alg.'};}
+function gARa(d){const r1=Ri(2,7),r2=Ri(2,7),t=Ri(3,12)*(r1+r2);const p1=t*r1/(r1+r2);const ans=Math.max(p1,t-p1);const o=wrongSet(ans,4,[-8,-4,4,8]);return{cat:'arithmetic',type:'mc',diff:d,text:`Ratio ${r1}:${r2}, sum=${t}. Larger quantity?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`Each part=${t/(r1+r2)}. Larger=${Math.max(r1,r2)}×${t/(r1+r2)}=${ans}.`,shortcut:'Value = (part/total_parts) × sum'};}
+function gASq(d){const a1=Ri(1,20),dd=Ri(2,8),n=Ri(8,20);const an=a1+(n-1)*dd,sum=n*(a1+an)/2;const isS=Math.random()<.5;const ans=isS?sum:an;const o=wrongSet(ans,4,[-dd*2,-dd,dd,dd*2]);return{cat:'arithmetic',type:'mc',diff:d,text:`Arith seq: a₁=${a1}, d=${dd}. ${isS?`Sum of first ${n} terms`:`${n}th term`}?`,options:o.map(String),get answer(){return this.options.indexOf(String(ans))},explanation:isS?`aₙ=${an}, Sum=${n}(${a1}+${an})/2=${sum}.`:`aₙ=${a1}+(${n-1})·${dd}=${an}.`,shortcut:isS?'Sum=n(first+last)/2':'aₙ=a₁+(n−1)d'};}
+function gAAb(d){const a=Ri(2,10),b=Ri(1,20);const s1=(-b+a),s2=(-b-a);const ans=s1+s2;const o=wrongSet(ans,4,[-4,-2,2,4]);return{cat:'arithmetic',type:'mc',diff:d,text:`If |x+${b}|=${a}, sum of all values of x?`,options:o.map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`x=${s1} or x=${s2}. Sum=${ans}.`,shortcut:'Sum of solutions of |x+b|=a is always −2b.'};}
+function gARd(d){const n=pick([2,3,5,6,7,8,10,12,18,20,27,32,45,48,50,72,75,98,128,200]);let out=1,ins=n;for(let p of[2,3,5,7])while(ins%(p*p)===0){ins/=p*p;out*=p;}const as=ins===1?`${out}`:`${out===1?'':out}√${ins}`;const o=shuf([as,`${out+1}√${ins>1?ins:2}`,`${Math.max(1,out-1)}√${ins+1}`,`√${n}`]).slice(0,4);if(!o.includes(as))o[3]=as;return{cat:'arithmetic',type:'mc',diff:d,text:`Simplify √${n}`,options:o,get answer(){return this.options.indexOf(as)},explanation:`√${n}=${as}.`,shortcut:'Factor out largest perfect square.'};}
+
+// ═══ ALGEBRA ═══
+function gLL(d){const a=Ri(2,8),b=Ri(-15,15),x=Ri(-10,10),c=a*x+b;const o=wrongSet(x,4,[-3,-2,-1,1,2,3]);return{cat:'algebra',type:'mc',diff:d,text:`${a}x ${b>=0?'+ '+b:'− '+Math.abs(b)} = ${c}. x = ?`,options:o.map(String),answer:o.indexOf(x),explanation:`${a}x=${c-b}, x=${x}.`,shortcut:'Isolate x in one step.'};}
+function gLQ(d){const r1=Ri(-8,8),r2=Ri(-8,8);const b=-(r1+r2),c=r1*r2;const ans=Math.max(r1,r2);const o=wrongSet(ans,4,[-3,-1,1,3]);return{cat:'algebra',type:'mc',diff:d,text:`x²${b>=0?'+'+b:'−'+Math.abs(b)}x${c>=0?'+'+c:'−'+Math.abs(c)}=0. Greater root?`,options:o.map(String),answer:o.indexOf(ans),explanation:`(x−${r1})(x−${r2})=0. Roots: ${r1},${r2}. Greater=${ans}.`,shortcut:'Factor pairs of c that sum to b.'};}
+function gLI(d){const a=Ri(2,6),b=Ri(1,20),c=Ri(b+a*2,b+a*12);const bound=(c-b)/a;const cnt=Math.max(0,Math.floor(bound)+1);const o=wrongSet(cnt,4,[-2,-1,1,2]);return{cat:'algebra',type:'mc',diff:d,text:`How many non-negative integers satisfy ${a}x+${b} ≤ ${c}?`,options:o.filter(v=>v>=0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(cnt))},explanation:`x≤${bound.toFixed(2)}. Count: 0,1,...,${Math.floor(bound)} = ${cnt}.`,shortcut:'Solve for x, count integers in range.'};}
+function gLS(d){const x=Ri(-8,8),y=Ri(-8,8),a1=Ri(1,5),b1=Ri(1,5),c1=a1*x+b1*y,a2=Ri(1,5),b2=Ri(1,5),c2=a2*x+b2*y;if(a1*b2===a2*b1)return gLS(d);const tgt=pick(['x','y','x+y','xy']);let ans;switch(tgt){case'x':ans=x;break;case'y':ans=y;break;case'x+y':ans=x+y;break;case'xy':ans=x*y;break}const o=wrongSet(ans);return{cat:'algebra',type:'mc',diff:d,text:`${a1}x+${b1}y=${c1}, ${a2}x+${b2}y=${c2}. ${tgt}=?`,options:o.map(String),answer:o.indexOf(ans),explanation:`Solving: x=${x},y=${y}. ${tgt}=${ans}.`,shortcut:'Add/subtract equations for combined expressions.'};}
+function gLF(d){const a=Ri(1,4),b=Ri(-8,8),x=Ri(-5,5);const fx=a*x+b,ffx=a*fx+b;const o=wrongSet(ffx);return{cat:'algebra',type:'mc',diff:d,text:`f(x)=${a}x${b>=0?'+'+b:b}. f(f(${x}))=?`,options:o.map(String),answer:o.indexOf(ffx),explanation:`f(${x})=${fx}. f(${fx})=${ffx}.`,shortcut:'Work inside-out.'};}
+function gLE(d){const base=pick([2,3,5]),x=Ri(2,8),y=Ri(1,x-1);const s=x+y,prod=base**s;const o=wrongSet(x,4,[-2,-1,1,2]);return{cat:'algebra',type:'mc',diff:d,text:`${base}^x·${base}^y=${prod}, x−y=${x-y}. x=?`,options:o.map(String),answer:o.indexOf(x),explanation:`x+y=${s}, x−y=${x-y}. 2x=${s+x-y}. x=${x}.`,shortcut:'Same base→equate exp. Combine with 2nd equation.'};}
+function gLA(d){const a=Ri(2,5),b=Ri(1,15),k=Ri(1,10);const s1=(k-b)/a,s2=(-k-b)/a;const sum=Math.round((s1+s2)*100)/100;return{cat:'algebra',type:'numeric',diff:d,text:`|${a}x+${b}|=${k}. Sum of all x values? (decimal ok)`,answer:sum,explanation:`x=${s1.toFixed(2)} or ${s2.toFixed(2)}. Sum=${sum}.`,shortcut:'Sum = −2b/a.'};}
+function gLW(d){const r1=Ri(2,8),r2=Ri(2,8);if(r1===r2)return gLW(d);const t=Ri(50,200);const h=Math.round(t/(r1+r2)*10)/10;const o=wrongSet(h,4,[-2,-1,1,2,3]);return{cat:'algebra',type:'mc',diff:d,text:`Machine A: ${r1}/hr, B: ${r2}/hr. Together, hours for ${t} items?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(h))},explanation:`Combined=${r1+r2}/hr. Time=${t}/${r1+r2}=${h}h.`,shortcut:'Add rates. Time=Total/CombinedRate.'};}
+function gLSq(d){const a=Ri(1,5),r=pick([2,3,-2,-1,0.5]);const n=Ri(4,7);const v=Math.round(a*r**(n-1)*1000)/1000;const o=wrongSet(v);return{cat:'algebra',type:'mc',diff:d,text:`Geo seq: a₁=${a}, r=${r}. ${n}th term?`,options:o.map(String),answer:o.indexOf(v),explanation:`aₙ=${a}·${r}^${n-1}=${v}.`,shortcut:'aₙ=a₁·rⁿ⁻¹'};}
+function gLFa(d){const b=Ri(1,10);const o=shuf([`(x−${b})(x+${b})`,`(x−${b})²`,`(x+${b})²`,`(x−${b*2})(x+1)`]);return{cat:'algebra',type:'mc',diff:d,text:`Factor: x²−${b*b}`,options:o,answer:o.indexOf(`(x−${b})(x+${b})`),explanation:`Difference of squares: x²−${b}²=(x−${b})(x+${b}).`,shortcut:'a²−b²=(a−b)(a+b)'};}
+
+// ═══ GEOMETRY ═══
+function gGT(d){const a=Ri(3,12),b=Ri(3,12);const ar=a*b/2;const o=wrongSet(ar);return{cat:'geometry',type:'mc',diff:d,text:`Right triangle legs ${a} and ${b}. Area?`,options:o.map(String),answer:o.indexOf(ar),explanation:`½·${a}·${b}=${ar}.`,shortcut:'Right △ area: ½·leg₁·leg₂'};}
+function gGC(d){const r=Ri(2,12),th=pick([30,45,60,72,90,120,180]);const isA=Math.random()<.5;const ans=Math.round((isA?th/360*2*Math.PI*r:th/360*Math.PI*r*r)*100)/100;const o=wrongSet(ans,4,[-5,-2,2,5].map(x=>x*(ans>50?10:1)));return{cat:'geometry',type:'mc',diff:d,text:`Circle r=${r}. ${isA?'Arc length':'Sector area'} for ${th}°? (π≈3.14)`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`(${th}/360)×${isA?`2π(${r})`:`π(${r})²`}=${ans}.`,shortcut:'θ/360 × (circumference or area)'};}
+function gGR(d){const l=Ri(3,20),w=Ri(3,20);const dg=Math.round(Math.sqrt(l*l+w*w)*100)/100;const o=wrongSet(dg,4,[-2,-1,1,2]);return{cat:'geometry',type:'mc',diff:d,text:`Rectangle ${l}×${w}. Diagonal?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(dg))},explanation:`√(${l}²+${w}²)=√${l*l+w*w}≈${dg}.`,shortcut:'Diagonal=√(l²+w²)'};}
+function gGCy(d){const r=Ri(2,8),h=Ri(4,15);const isV=Math.random()<.5;const ans=Math.round((isV?Math.PI*r*r*h:2*Math.PI*r*r+2*Math.PI*r*h)*100)/100;const o=wrongSet(ans,4,[-50,-20,20,50]);return{cat:'geometry',type:'mc',diff:d,text:`Cylinder r=${r},h=${h}. ${isV?'Volume':'Surface area'}? (π≈3.14)`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`${isV?'πr²h':'2πr(r+h)'}=${ans}.`,shortcut:isV?'V=πr²h':'SA=2πr(r+h)'};}
+function gGA(d){const n=pick([5,6,8,9,10,12]);const s=(n-2)*180;const e=s/n;const isS=Math.random()<.5;const ans=isS?s:e;const nm={5:'pentagon',6:'hexagon',8:'octagon',9:'nonagon',10:'decagon',12:'dodecagon'};const o=wrongSet(ans,4,[-40,-20,20,40]);return{cat:'geometry',type:'mc',diff:d,text:`${isS?'Sum of angles':'Each angle'} of regular ${nm[n]}?`,options:o.filter(v=>v>0).slice(0,4).map(v=>v+'°'),get answer(){return this.options.indexOf(ans+'°')},explanation:`Sum=(${n}−2)×180=${s}°. Each=${e}°.`,shortcut:'(n−2)×180 for sum. ÷n for each.'};}
+function gGS(d){const tp=pick(['30-60-90','45-45-90']);const x=Ri(2,10);let q,ans;if(tp==='30-60-90'){const h=2*x;q=`30-60-90: shortest side=${x}. Hypotenuse?`;ans=h;}else{ans=Math.round(x*1.414*100)/100;q=`45-45-90: each leg=${x}. Hypotenuse?`;}const o=wrongSet(ans,4,[-2,-1,1,2,3]);return{cat:'geometry',type:'mc',diff:d,text:q,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`${tp}: ${tp==='30-60-90'?'x:x√3:2x':'x:x:x√2'}.`,shortcut:'Memorize special triangle ratios.'};}
+function gGAr(d){const b1=Ri(4,15),b2=Ri(4,15),h=Ri(3,10);const a=(b1+b2)*h/2;const o=wrongSet(a,4,[-10,-5,5,10]);return{cat:'geometry',type:'mc',diff:d,text:`Trapezoid: parallel sides ${b1},${b2}; height ${h}. Area?`,options:o.map(String),answer:o.indexOf(a),explanation:`½(${b1}+${b2})·${h}=${a}.`,shortcut:'½(b₁+b₂)h'};}
+function gGP(d){const ts=[[3,4,5],[5,12,13],[8,15,17],[7,24,25]];const[a,b,c]=pick(ts);const k=Ri(1,4);const ss=[a*k,b*k,c*k];const mi=Ri(0,2);const ans=ss[mi];const sh=ss.filter((_,i)=>i!==mi);const o=wrongSet(ans,4,[-3,-1,1,3,5]);return{cat:'geometry',type:'mc',diff:d,text:`Right △: ${mi===2?`legs ${sh[0]},${sh[1]}`:`leg ${sh[0]}, hyp ${sh[1]}`}. Find ${mi===2?'hypotenuse':'other leg'}.`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`Pythagorean: ${ans}.`,shortcut:'Know triples: 3-4-5, 5-12-13, 8-15-17 + multiples.'};}
+function gGSi(d){const k=pick([2,3,4,5]);const a1=Ri(10,50);const o=wrongSet(k*k,4,[-3,-1,1,3]);return{cat:'geometry',type:'mc',diff:d,text:`Similar △s, sides ratio 1:${k}. Area ratio?`,options:o.filter(v=>v>0).slice(0,4).map(v=>`1:${v}`),get answer(){return this.options.indexOf(`1:${k*k}`)},explanation:`Sides k → areas k². 1:${k*k}.`,shortcut:'Side ratio k → area ratio k².'};}
+function gGPo(d){const n=pick([3,4,5,6,8,10]);const ext=360/n;const o=wrongSet(ext,4,[-20,-10,10,20]);return{cat:'geometry',type:'mc',diff:d,text:`Each exterior angle of regular ${n}-gon?`,options:o.filter(v=>v>0).slice(0,4).map(v=>v+'°'),get answer(){return this.options.indexOf(ext+'°')},explanation:`360/${n}=${ext}°.`,shortcut:'Exterior angles sum to 360°.'};}
+
+// ═══ COORDINATE ═══
+function gCD(d){const x1=Ri(-8,8),y1=Ri(-8,8),x2=Ri(-8,8),y2=Ri(-8,8);const ds=Math.round(Math.sqrt((x2-x1)**2+(y2-y1)**2)*100)/100;const o=wrongSet(ds,4,[-2,-1,1,2]);return{cat:'coordinate',type:'mc',diff:d,text:`Distance: (${x1},${y1}) to (${x2},${y2})?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ds))},explanation:`√(${(x2-x1)**2}+${(y2-y1)**2})≈${ds}.`,shortcut:'Distance formula. Look for Pythagorean triples.'};}
+function gCS(d){let x1=Ri(-8,8),y1=Ri(-8,8),x2=Ri(-8,8),y2=Ri(-8,8);if(x1===x2)x2++;const sl=Math.round((y2-y1)/(x2-x1)*100)/100;const o=wrongSet(sl,4,[-2,-1,.5,1,2]);return{cat:'coordinate',type:'mc',diff:d,text:`Slope through (${x1},${y1}) and (${x2},${y2})?`,options:o.map(String),answer:o.indexOf(sl),explanation:`(${y2}−${y1})/(${x2}−${x1})=${sl}.`,shortcut:'Rise/run.'};}
+function gCM(d){const x1=Ri(-10,10),y1=Ri(-10,10),x2=Ri(-10,10),y2=Ri(-10,10);const mx=(x1+x2)/2,my=(y1+y2)/2;const ans=`(${mx}, ${my})`;const o=shuf([ans,`(${mx+1}, ${my})`,`(${mx}, ${my+1})`,`(${mx-1}, ${my-1})`]);return{cat:'coordinate',type:'mc',diff:d,text:`Midpoint of (${x1},${y1}) and (${x2},${y2})?`,options:o,answer:o.indexOf(ans),explanation:`((${x1}+${x2})/2,(${y1}+${y2})/2)=(${mx},${my}).`,shortcut:'Average x, average y.'};}
+function gCI(d){const a=Ri(1,6),b=Ri(1,6),c=Ri(6,36);const xi=Math.round(c/a*100)/100,yi=Math.round(c/b*100)/100;const ar=Math.round(.5*xi*yi*100)/100;const o=wrongSet(ar,4,[-5,-2,2,5]);return{cat:'coordinate',type:'mc',diff:d,text:`${a}x+${b}y=${c} forms triangle with axes. Area?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ar))},explanation:`x-int=${xi}, y-int=${yi}. Area=½·${xi}·${yi}=${ar}.`,shortcut:'C²/(2AB) or find intercepts manually.'};}
+function gCP(d){const m=pick([1,2,3,4,-1,-2,-3]);const px=Ri(-5,5),py=Ri(-5,5);const pm=-1/m;const yi2=Math.round((py-pm*px)*100)/100;const xx=Math.round(-yi2/pm*100)/100;const ans=`(${xx}, 0)`;const o=shuf([ans,`(${Math.round(xx+2)}, 0)`,`(0, ${Math.round(yi2)})`,`(${Math.round(-xx)}, 0)`]);return{cat:'coordinate',type:'mc',diff:d,text:`Line through (${px},${py}), ⊥ to y=${m}x+1. x-intercept?`,options:o,answer:o.indexOf(ans),explanation:`Perp slope=${pm.toFixed(3)}. Line→set y=0→x=${xx}.`,shortcut:'Perp slope = −1/m. Point-slope form.'};}
+function gCA(d){const x2=Ri(3,10),x3=Ri(1,9),y3=Ri(2,8);const ar=Math.abs(x2*y3)/2;const o=wrongSet(ar,4,[-4,-2,2,4]);return{cat:'coordinate',type:'mc',diff:d,text:`Triangle: (0,0),(${x2},0),(${x3},${y3}). Area?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ar))},explanation:`Base=${x2}, height=${y3}. ½·${x2}·${y3}=${ar}.`,shortcut:'Base on axis→½·base·height.'};}
+function gCC(d){const h=Ri(-5,5),k=Ri(-5,5),r=Ri(2,8);const ans=`(${h}, ${k})`;const o=shuf([ans,`(${-h}, ${-k})`,`(${h}, ${-k})`,`(${-h}, ${k})`]);return{cat:'coordinate',type:'mc',diff:d,text:`Center of (x${h>=0?'−'+h:'+'+Math.abs(h)})²+(y${k>=0?'−'+k:'+'+Math.abs(k)})²=${r*r}?`,options:o,answer:o.indexOf(ans),explanation:`(x−h)²+(y−k)²=r²→center(${h},${k}).`,shortcut:'Watch signs in (x−h)²+(y−k)².'};}
+function gCR(d){const x=Ri(-8,8),y=Ri(-8,8);const ax=pick(['x-axis','y-axis','origin','y=x']);let rx,ry;switch(ax){case'x-axis':rx=x;ry=-y;break;case'y-axis':rx=-x;ry=y;break;case'origin':rx=-x;ry=-y;break;case'y=x':rx=y;ry=x;break}const ans=`(${rx}, ${ry})`;const o=shuf([`(${rx}, ${ry})`,`(${-rx}, ${ry})`,`(${rx}, ${-ry})`,`(${ry}, ${rx})`]);return{cat:'coordinate',type:'mc',diff:d,text:`Reflect (${x},${y}) over ${ax}.`,options:o,answer:o.indexOf(ans),explanation:`${ax}: (${x},${y})→(${rx},${ry}).`,shortcut:'x-axis:flip y. y-axis:flip x. Origin:both. y=x:swap.'};}
+function gCL(d){const m=pick([-3,-2,-1,1,2,3,4]),b=Ri(-10,10),x=Ri(-5,5);return{cat:'coordinate',type:'numeric',diff:d,text:`y=${m}x${b>=0?'+'+b:b}. y when x=${x}?`,answer:m*x+b,explanation:`${m}(${x})${b>=0?'+'+b:b}=${m*x+b}.`,shortcut:'Direct substitution.'};}
+function gCPa(d){const m=pick([1,2,3,-1,-2,-3,.5,-.5]);const o=shuf([m,-1/m,-m,m+1].map(String));return{cat:'coordinate',type:'mc',diff:d,text:`Slope=${m}. Parallel line's slope?`,options:o,answer:o.indexOf(String(m)),explanation:`Parallel=same slope=${m}.`,shortcut:'Parallel=same slope. Perp=neg reciprocal.'};}
+
+// ═══ DATA ═══
+function gDM(d){const n=Ri(5,9),vs=Array.from({length:n},()=>Ri(10,100));const s=vs.reduce((a,b)=>a+b,0);const nv=Ri(10,100);const nm=Math.round((s+nv)/(n+1)*100)/100;const o=wrongSet(nm,4,[-5,-2,2,5]);return{cat:'data',type:'mc',diff:d,text:`Mean of {${vs.join(',')}} is ${(s/n).toFixed(1)}. Add ${nv}. New mean?`,options:o.map(String),answer:o.indexOf(nm),explanation:`New sum=${s+nv}. New mean=${s+nv}/${n+1}=${nm}.`,shortcut:'Mean=Sum/Count.'};}
+function gDP(d){const r=Ri(2,8),b=Ri(2,8),t=r+b;const p=Math.round(r*(r-1)/(t*(t-1))*10000)/10000;const o=wrongSet(p,4,[-.05,.05,.1,-.1]);return{cat:'data',type:'mc',diff:d,text:`${r} red, ${b} blue marbles. P(both red, no replacement)?`,options:o.filter(v=>v>0&&v<1).slice(0,4).map(v=>(v*100).toFixed(2)+'%'),get answer(){return this.options.indexOf((p*100).toFixed(2)+'%')},explanation:`(${r}/${t})·(${r-1}/${t-1})=${(p*100).toFixed(2)}%.`,shortcut:'Without replacement: reduce counts.'};}
+function gDC(d){const n=Ri(5,12),r=Ri(2,Math.min(n-1,5));function f(x){let v=1;for(let i=2;i<=x;i++)v*=i;return v}const ans=f(n)/(f(r)*f(n-r));const o=wrongSet(ans,4,[-20,-10,10,20]);return{cat:'data',type:'mc',diff:d,text:`${n}C${r} = ?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`${n}!/(${r}!·${n-r}!)=${ans}.`,shortcut:'Cancel before multiplying.'};}
+function gDS(d){const base=Ri(10,50),sp=Ri(1,5);const sA=Array.from({length:5},()=>base+Ri(-sp,sp)),sB=Array.from({length:5},()=>base+Ri(-sp*3,sp*3));return{cat:'data',type:'mc',diff:d,text:`A:{${sA.join(',')}} B:{${sB.join(',')}}. Which has higher SD?`,options:['Set A','Set B','Equal','Cannot tell'],answer:1,explanation:`B is more spread out → higher SD.`,shortcut:"Don't calculate SD. Eyeball the spread."};}
+function gDMe(d){const vs=Array.from({length:7},()=>Ri(5,50)).sort((a,b)=>a-b);const med=vs[3];const o=wrongSet(med,4,[-3,-1,1,3]);return{cat:'data',type:'mc',diff:d,text:`Median of {${shuf(vs).join(',')}}?`,options:o.map(String),answer:o.indexOf(med),explanation:`Sorted:{${vs.join(',')}}. Middle=${med}.`,shortcut:'Sort, pick middle.'};}
+function gDV(d){const t=Ri(60,150),a=Ri(20,t-20),b=Ri(20,t-20),bo=Ri(5,Math.min(a,b)-5);const ne=t-a-b+bo;if(ne<0)return gDV(d);const o=wrongSet(ne,4,[-8,-4,4,8]);return{cat:'data',type:'mc',diff:d,text:`${t} people: ${a} tea, ${b} coffee, ${bo} both. Neither?`,options:o.filter(v=>v>=0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ne))},explanation:`Total−(A+B−Both)=${t}−${a+b-bo}=${ne}.`,shortcut:'Total=A+B−Both+Neither.'};}
+function gDPe(d){const t=Ri(200,500),ps=[];let rem=100;for(let i=0;i<4;i++){const p=Ri(10,Math.floor(rem/((4-i))));ps.push(p);rem-=p;}ps.push(rem);const idx=Ri(0,4);const ans=Math.round(t*ps[idx]/100);const o=wrongSet(ans,4,[-15,-8,8,15]);const labels=['A','B','C','D','E'];return{cat:'data',type:'mc',diff:d,text:`${t} surveyed: ${ps.map((p,i)=>`${labels[i]}:${p}%`).join(', ')}. How many chose ${labels[idx]}?`,options:o.filter(v=>v>0).slice(0,4).map(String),get answer(){return this.options.indexOf(String(ans))},explanation:`${ps[idx]}% of ${t}=${ans}.`,shortcut:'Total × decimal.'};}
+
+// Chart questions
+function gDCh1(d){const months=['Jan','Feb','Mar','Apr','May','Jun'];const sales=months.map(()=>Ri(20,100)*10);const idx=Ri(0,5);const ans=sales[idx];const cid='c'+Date.now()+Ri(0,9999);const o=wrongSet(ans,4,[-100,-50,50,100]);return{cat:'data',type:'mc',diff:d,text:`<div class="chart-title">Monthly Sales ($K)</div><canvas id="${cid}" width="480" height="200"></canvas><br>Sales in ${months[idx]}?`,options:o.filter(v=>v>0).slice(0,4).map(v=>'$'+v+'K'),get answer(){return this.options.indexOf('$'+ans+'K')},explanation:`Bar chart shows ${months[idx]}=$${ans}K.`,shortcut:'Read y-axis carefully.',isChart:true,chartFn:()=>drawBar(cid,months,sales)};}
+function gDCh2(d){const cats=['Tech','Health','Finance','Energy','Retail'];const vs=cats.map(()=>Ri(5,40));const tot=vs.reduce((a,b)=>a+b,0);const pcts=vs.map(v=>Math.round(v/tot*100));const idx=Ri(0,4);const ans=pcts[idx];const o=wrongSet(ans,4,[-8,-4,4,8]);const cid='c'+Date.now()+Ri(0,9999);return{cat:'data',type:'mc',diff:d,text:`<div class="chart-title">Portfolio Allocation</div><canvas id="${cid}" width="380" height="230"></canvas><br>~% in ${cats[idx]}?`,options:o.filter(v=>v>0&&v<=100).slice(0,4).map(v=>v+'%'),get answer(){return this.options.indexOf(ans+'%')},explanation:`${cats[idx]}≈${ans}%.`,shortcut:'Estimate slice vs quarter (25%).',isChart:true,chartFn:()=>drawPie(cid,cats,pcts)};}
+function gDCh3(d){const yrs=['2019','2020','2021','2022','2023'];const cA=yrs.map(()=>Ri(30,90)),cB=yrs.map(()=>Ri(30,90));const yi=Ri(0,4);const diff=Math.abs(cA[yi]-cB[yi]);const o=wrongSet(diff,4,[-10,-5,5,10]);const cid='c'+Date.now()+Ri(0,9999);return{cat:'data',type:'mc',diff:d,text:`<div class="chart-title">Revenue ($M): A vs B</div><canvas id="${cid}" width="480" height="200"></canvas><br>Abs difference in ${yrs[yi]}?`,options:o.filter(v=>v>=0).slice(0,4).map(v=>'$'+v+'M'),get answer(){return this.options.indexOf('$'+diff+'M')},explanation:`A=$${cA[yi]}M, B=$${cB[yi]}M. Diff=$${diff}M.`,shortcut:'Read both lines at year, subtract.',isChart:true,chartFn:()=>drawLine(cid,yrs,cA,cB)};}
+
+// ═══ CHART DRAW ═══
+function drawBar(id,labels,data){setTimeout(()=>{const cv=document.getElementById(id);if(!cv)return;const x=cv.getContext('2d'),w=cv.width,h=cv.height,p={l:45,r:15,t:15,b:35};const mx=Math.max(...data)*1.2,bw=(w-p.l-p.r)/labels.length*.6,gp=(w-p.l-p.r)/labels.length*.4;const tc=getComputedStyle(document.documentElement).getPropertyValue('--text2').trim(),lc=getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),ac=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();x.clearRect(0,0,w,h);x.strokeStyle=lc;x.lineWidth=.5;x.font='9px JetBrains Mono';x.fillStyle=tc;x.textAlign='right';for(let i=0;i<=4;i++){const y=p.t+(h-p.t-p.b)*(1-i/4);x.beginPath();x.moveTo(p.l,y);x.lineTo(w-p.r,y);x.stroke();x.fillText(Math.round(mx*i/4),p.l-4,y+3)}x.textAlign='center';labels.forEach((l,i)=>{const lx=p.l+i*(bw+gp)+gp/2,bh=data[i]/mx*(h-p.t-p.b),y=h-p.b-bh;const g=x.createLinearGradient(0,y,0,h-p.b);g.addColorStop(0,ac);g.addColorStop(1,'rgba(0,229,160,.3)');x.fillStyle=g;x.beginPath();x.roundRect(lx,y,bw,bh,3);x.fill();x.fillStyle=tc;x.font='9px DM Sans';x.fillText(l,lx+bw/2,h-p.b+14)})},60)}
+function drawPie(id,labels,pcts){setTimeout(()=>{const cv=document.getElementById(id);if(!cv)return;const x=cv.getContext('2d'),w=cv.width,h=cv.height,cx=w*.35,cy=h/2,r=Math.min(w*.28,h*.38);const cs=['#00e5a0','#7c5cfc','#ff6b6b','#ffd93d','#00b4ff'];const tc=getComputedStyle(document.documentElement).getPropertyValue('--text').trim();x.clearRect(0,0,w,h);let sa=-Math.PI/2;pcts.forEach((p,i)=>{const sl=p/100*2*Math.PI;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,r,sa,sa+sl);x.closePath();x.fillStyle=cs[i%5];x.fill();x.strokeStyle='rgba(0,0,0,.2)';x.lineWidth=1;x.stroke();sa+=sl});x.font='10px DM Sans';x.textAlign='left';labels.forEach((l,i)=>{const ly=24+i*20,lx=w*.66;x.fillStyle=cs[i%5];x.fillRect(lx,ly-7,10,10);x.fillStyle=tc;x.fillText(`${l} ${pcts[i]}%`,lx+15,ly+2)})},60)}
+function drawLine(id,labels,dA,dB){setTimeout(()=>{const cv=document.getElementById(id);if(!cv)return;const x=cv.getContext('2d'),w=cv.width,h=cv.height,p={l:45,r:15,t:15,b:35};const mx=Math.max(...dA,...dB)*1.2;const tc=getComputedStyle(document.documentElement).getPropertyValue('--text2').trim(),lc=getComputedStyle(document.documentElement).getPropertyValue('--border').trim();x.clearRect(0,0,w,h);x.strokeStyle=lc;x.lineWidth=.5;x.font='9px JetBrains Mono';x.fillStyle=tc;x.textAlign='right';for(let i=0;i<=4;i++){const y=p.t+(h-p.t-p.b)*(1-i/4);x.beginPath();x.moveTo(p.l,y);x.lineTo(w-p.r,y);x.stroke();x.fillText(Math.round(mx*i/4),p.l-4,y+3)}x.textAlign='center';labels.forEach((l,i)=>{x.fillText(l,p.l+i/(labels.length-1)*(w-p.l-p.r),h-p.b+14)});function dl(d,c){x.strokeStyle=c;x.lineWidth=2;x.lineJoin='round';x.beginPath();d.forEach((v,i)=>{const px=p.l+i/(d.length-1)*(w-p.l-p.r),py=p.t+(1-v/mx)*(h-p.t-p.b);i===0?x.moveTo(px,py):x.lineTo(px,py)});x.stroke();d.forEach((v,i)=>{const px=p.l+i/(d.length-1)*(w-p.l-p.r),py=p.t+(1-v/mx)*(h-p.t-p.b);x.beginPath();x.arc(px,py,3,0,Math.PI*2);x.fillStyle=c;x.fill()})}dl(dA,'#00e5a0');dl(dB,'#7c5cfc');x.font='10px DM Sans';x.textAlign='left';x.fillStyle='#00e5a0';x.fillRect(w-100,8,12,3);x.fillStyle=tc;x.fillText('A',w-84,12);x.fillStyle='#7c5cfc';x.fillRect(w-100,20,12,3);x.fillStyle=tc;x.fillText('B',w-84,24)},60)}
+
+// ═══ PRACTICE SYSTEM ═══
+let prInit=false,prCat='all',prDiff='all',prConcept='all',prQ=[],prIdx=0,prSel=null,prAns=false,prT0=0;
+
+function initPR(){
+  prInit=true;
+  const cats=['all','arithmetic','algebra','geometry','coordinate','data'];
+  const labs=['All','Arithmetic','Algebra','Geometry','Coord. Geo','Data'];
+  document.getElementById('prTopicTabs').innerHTML=cats.map((c,i)=>`<button class="tab${i===0?' on':''}" onclick="setPrCat(this,'${c}')">${labs[i]}</button>`).join('');
+  const diffs=['all','Easy','Medium','Hard'];
+  document.getElementById('prDiffTabs').innerHTML=diffs.map((d,i)=>`<button class="tab${i===0?' on':''}" onclick="setPrDiff(this,'${d}')">${d==='all'?'All':d}</button>`).join('');
+  updateConceptChips();
+  loadBatch();
+}
+
+function setPrCat(b,c){document.querySelectorAll('#prTopicTabs .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');prCat=c;prConcept='all';updateConceptChips();prQ=[];prIdx=0;loadBatch();}
+function setPrDiff(b,d){document.querySelectorAll('#prDiffTabs .tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');prDiff=d;prQ=[];prIdx=0;loadBatch();}
+function setPrConcept(b,c){document.querySelectorAll('#prConcepts .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');prConcept=c;prQ=[];prIdx=0;loadBatch();}
+
+function updateConceptChips(){
+  if(prCat==='all'){document.getElementById('prConcepts').innerHTML='<span class="chip on" onclick="setPrConcept(this,\'all\')">All Concepts</span>';return;}
+  const cs=CONCEPTS[prCat]||[];
+  document.getElementById('prConcepts').innerHTML='<span class="chip on" onclick="setPrConcept(this,\'all\')">All</span>'+cs.map((c,i)=>`<span class="chip" onclick="setPrConcept(this,${i})">${c}</span>`).join('');
+}
+
+function loadBatch(){
+  const cats=prCat==='all'?['arithmetic','algebra','geometry','coordinate','data']:[prCat];
+  for(let i=0;i<10;i++){
+    const cat=pick(cats);
+    const diff=prDiff==='all'?pick(DIFFS):prDiff;
+    const concept=prConcept==='all'?undefined:prConcept;
+    prQ.push(genQ(cat,diff,concept));
+  }
+  renderQ();
+}
+
+function renderQ(){
+  if(prIdx>=prQ.length){loadBatch();return;}
+  const q=prQ[prIdx];prSel=null;prAns=false;prT0=Date.now();
+  document.getElementById('qCtr').textContent=`Q ${prIdx+1} / ${prQ.length}+`;
+  document.getElementById('prFill').style.width=((prIdx+1)/Math.max(prQ.length,1)*100)+'%';
+  const col={arithmetic:['var(--accentD)','var(--accent)','ARITH'],algebra:['var(--ac2D)','var(--ac2)','ALGEBRA'],geometry:['var(--ac3D)','var(--ac3)','GEO'],coordinate:['var(--ac4D)','var(--ac4)','COORD'],data:['var(--ac5D)','var(--ac5)','DATA']};
+  const[bg,fg,lb]=col[q.cat]||['','',''];
+  const tl={mc:'Multiple Choice',qc:'Qty Comparison',numeric:'Numeric Entry'};
+  let body='';
+  if(q.type==='qc'&&q.qA)body+=`<div class="qc-box"><div class="qc-col"><h4>Qty A</h4><div class="v mono">${q.qA}</div></div><div class="qc-vs">vs</div><div class="qc-col"><h4>Qty B</h4><div class="v mono">${q.qB}</div></div></div>`;
+  if(q.type==='mc'||q.type==='qc')body+=`<div class="q-opts" id="curOpts">${q.options.map((o,i)=>`<div class="q-opt" onclick="selOpt(${i})" id="o-${i}"><span class="lt">${String.fromCharCode(65+i)}</span><span>${o}</span></div>`).join('')}</div>`;
+  else if(q.type==='numeric')body+=`<input type="text" class="q-num mono" id="numIn" placeholder="?" autocomplete="off" inputmode="decimal">`;
+  document.getElementById('prArea').innerHTML=`<div class="q-card"><div class="q-tags"><span class="q-tag" style="background:${bg};color:${fg}">${lb}</span><span class="q-tag" style="background:var(--ac3D);color:var(--ac3)">${q.diff}</span><span class="q-tag" style="background:var(--surface2);color:var(--text2)">${tl[q.type]||'MC'}</span>${q.concept?`<span class="q-tag" style="background:var(--ac5D);color:var(--ac5)">${q.concept}</span>`:''}</div><div class="q-text">${q.text}</div>${body}<div class="q-btns"><button class="btn btn-p" id="chkBtn" onclick="chkAns()">Check Answer</button><button class="btn btn-s" onclick="document.getElementById('expl').classList.add('show')">Show Shortcut</button></div><div class="expl" id="expl"><h4>💡 Solution</h4><p>${q.explanation}</p><div class="sc-lbl">⚡ SHORTCUT:</div><p>${q.shortcut}</p></div></div>`;
+  if(q.isChart&&q.chartFn)setTimeout(q.chartFn,80);
+}
+
+function selOpt(i){if(prAns)return;prSel=i;document.querySelectorAll('#curOpts .q-opt').forEach((o,j)=>{o.className='q-opt'+(j===i?' sel':'')});}
+
+function chkAns(){
+  if(prAns)return;const q=prQ[prIdx];let ok=false;const t=Math.round((Date.now()-prT0)/1000);
+  if(q.type==='numeric'){const inp=document.getElementById('numIn');if(!inp)return;const v=parseFloat(inp.value);if(isNaN(v))return;ok=Math.abs(v-q.answer)<.05;}
+  else{if(prSel===null)return;let ci=typeof q.answer==='function'?q.answer:q.answer;if(typeof ci==='object'&&ci!==null)ci=0;ok=prSel===ci;
+    document.querySelectorAll('#curOpts .q-opt').forEach((o,j)=>{o.onclick=null;if(j===ci)o.className='q-opt ok';else if(j===prSel&&!ok)o.className='q-opt no';else o.className='q-opt';});}
+  prAns=true;S.totalAnswered++;S.topics[q.cat].done++;S.times.push(t);if(S.times.length>300)S.times=S.times.slice(-300);
+  if(ok){S.totalCorrect++;S.topics[q.cat].correct++;S.streak++;if(S.streak>S.bestStreak)S.bestStreak=S.streak;}else S.streak=0;
+  const lh=S.history[S.history.length-1];if(lh&&S.totalAnswered%10!==0){lh.c+=(ok?1:0);lh.t++;}else S.history.push({c:ok?1:0,t:1});
+  if(S.history.length>100)S.history=S.history.slice(-100);
+  saveAll();document.getElementById('navStreak').textContent='🔥 '+S.streak;
+  const btn=document.getElementById('chkBtn');btn.textContent=ok?'✓ Correct!':'✗ Incorrect';btn.style.background=ok?'var(--correct)':'var(--wrong)';btn.onclick=null;
+  document.getElementById('expl').classList.add('show');
+}
+function nextQ(){prIdx++;if(prIdx>=prQ.length)loadBatch();else renderQ();window.scrollTo(0,document.getElementById('pg-pr').offsetTop);}
+function startMini(){go('pr');prCat='all';prDiff='all';prConcept='all';prQ=[];prIdx=0;const cats=['arithmetic','algebra','geometry','coordinate','data'];for(let i=0;i<20;i++)prQ.push(genQ(pick(cats),pick(DIFFS)));renderQ();}
+
+// ═══ INIT ═══
+renderDash();
+</script>
+</body>
+</html>
