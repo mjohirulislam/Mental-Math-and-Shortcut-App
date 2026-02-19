@@ -377,6 +377,11 @@ main{position:relative;z-index:1;padding-top:54px;min-height:100vh}
    6. Copy your config and paste below
    7. Add your GitHub Pages URL to Auth → Settings → Authorized domains
 */
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBZ3RSfNeGE5ZeiDgyet7XMlwQ2AZTj_Go",
@@ -386,6 +391,9 @@ const firebaseConfig = {
   messagingSenderId: "317295183375",
   appId: "1:317295183375:web:3ee06d4f9cacc4acee857a"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);v
 
 let firebaseReady = false;
 let db = null;
